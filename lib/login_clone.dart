@@ -1,22 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_testing/controler/login_controler.dart';
+import 'package:get/get.dart';
 
-class LoginClone extends StatefulWidget {
-  const LoginClone({super.key});
+class LoginClone extends StatelessWidget {
+  LoginClone({super.key});
 
-  @override
-  State<LoginClone> createState() => _LoginCloneState();
-}
-
-class _LoginCloneState extends State<LoginClone> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  final LoginControler loginController = Get.put(LoginControler());
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +35,7 @@ class _LoginCloneState extends State<LoginClone> {
 
                 // Input Username / Email / Phone
                 TextField(
-                  controller: _usernameController,
+                  controller: loginController.txtUsername,
                   decoration: InputDecoration(
                     hintText: 'Phone number, username or email address',
                     hintStyle: TextStyle(
@@ -77,7 +66,7 @@ class _LoginCloneState extends State<LoginClone> {
 
                 // Input Password
                 TextField(
-                  controller: _passwordController,
+                  controller: loginController.txtpasword,
                   obscureText: true,
                   decoration: InputDecoration(
                     hintText: 'Password',
@@ -127,28 +116,41 @@ class _LoginCloneState extends State<LoginClone> {
                 const SizedBox(height: 20),
 
                 // Tombol Log In Biru
-                SizedBox(
-                  height: 44,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Logika tombol masuk
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(
-                        0xFF0095F6,
-                      ), // Warna biru Instagram
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                Obx(
+                  () => SizedBox(
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: loginController.isLoading.value
+                          ? null
+                          : () {
+                              loginController.login();
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(
+                          0xFF0095F6,
+                        ), // Warna biru Instagram
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'Log In',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
+                      child: loginController.isLoading.value
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Log In',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
                     ),
                   ),
                 ),
