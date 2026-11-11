@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_application_testing/models/login_model.dart';
 import 'package:flutter_application_testing/routes.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +9,7 @@ class LoginControler extends GetxController {
   TextEditingController txtpasword = TextEditingController();
 
   var isLoading = false.obs;
+  var loginModel = Rxn<LoginModel>();
 
   Future<void> login() async {
     if (txtUsername.text.trim().isEmpty || txtpasword.text.isEmpty) {
@@ -35,10 +35,10 @@ class LoginControler extends GetxController {
           .timeout(const Duration(seconds: 20));
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        loginModel.value = loginModelFromJson(response.body);
 
-        if (data['status'] == true) {
-          Get.snackbar("Berhasil", data['message'] ?? "Login berhasil");
+        if (loginModel.value?.status == true) {
+          Get.snackbar("Berhasil", loginModel.value?.message ?? "Login berhasil");
 
           // Tutup semua halaman sebelumnya
           // dan pindah ke Navigation Drawer
@@ -46,7 +46,7 @@ class LoginControler extends GetxController {
         } else {
           Get.snackbar(
             "Gagal",
-            data['message'] ?? "Username atau password salah",
+            loginModel.value?.message ?? "Username atau password salah",
           );
         }
       } else {
